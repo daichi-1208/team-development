@@ -4,15 +4,15 @@
 
 ### 初回実行時
 ```bash
-# Envファイルの初期化(APP_KEY生成)
-docker-compose run --rm backend cp .env.example .env
-docker-compose run --rm backend php artisan key:generate
-
 # ライブラリ関連インストール
 docker-compose run --rm frontend npm install
 docker-compose run --rm backend composer install
 
-# Laravelログディレクトリのパーミッション変更
+# Envファイルの初期化(APP_KEY生成)
+docker-compose run --rm backend cp .env.example .env
+docker-compose run --rm backend php artisan key:generate
+
+# Laravel Storageディレクトリのパーミッション変更
 docker-compose run --rm backend chmod 757 -R /var/www/html/storage
 ```
 
