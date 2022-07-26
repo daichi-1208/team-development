@@ -5,6 +5,7 @@ services:
     platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: "passw@rd"
+      MYSQL_DATABASE: "spin"
     ports:
       - "3306:3306"
     volumes:
