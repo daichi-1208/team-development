@@ -17,7 +17,7 @@ return new class extends Migration
             $table->dropColumn('name');
             $table->string('first_name')->after('id');
             $table->string('last_name')->after('first_name');
-            $table->string('display_name')->after('last_name');
+            $table->string('display_name')->after('last_name')->unique();
         });
     }
 
