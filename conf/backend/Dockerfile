@@ -14,6 +14,8 @@ RUN apt -y update && \
 
 RUN docker-php-ext-install pdo_mysql
 
+RUN a2enmod rewrite
+
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
