@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
+
+    /**
+     * リレーション
+     */
+    public function bookmark(){
+        return $this->belongsToMany(Bookmark::class);
+    }
 }

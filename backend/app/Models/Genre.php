@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Genre extends Model
 {
     use HasFactory;
+
+    /**
+     * リレーション
+     */
+    public function bookmarks(){
+        return $this->hasMany(Bookmark::class);
+    }
 }
