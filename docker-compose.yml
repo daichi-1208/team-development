@@ -11,6 +11,16 @@ services:
     volumes:
       - ./tmp/mysql/data:/var/lib/mysql
 
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /tmp
+    volumes:
+      - maildir:/tmp
+
   backend:
     build: ./conf/backend
     tty: true
@@ -41,3 +51,4 @@ services:
 volumes:
   node_modules:
   vendor:
+  maildir:
