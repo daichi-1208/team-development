@@ -26,6 +26,10 @@ Route::group(
         Route::post('register', 'AuthController@register');
         Route::post('login', 'AuthController@login');
         Route::post('logout', 'AuthController@logout')->middleware('auth:sanctum');
+
+        // パスワード忘れ
+        Route::post('forgot_password', 'AuthController@forgot_password');
+        Route::post('reset_password', 'AuthController@reset_password');
     }
 );
 

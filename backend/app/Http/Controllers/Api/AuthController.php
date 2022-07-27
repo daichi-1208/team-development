@@ -7,9 +7,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+
+    /**
+     * 新規登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function register(Request $request)
     {
         $validated_data = $request->validate([
@@ -37,6 +47,12 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * ログイン
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function login(Request $request)
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
@@ -63,6 +79,11 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * ログアウト
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function logout()
     {
         Auth::user()->tokens()->delete();
@@ -74,5 +95,71 @@ class AuthController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * パスワードリセット依頼
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function forgot_password(Request$request)
+    {
+        $validated_data = $request->validate([
+            'email' => 'required|string|email|max:255',
+        ]);
+
+        $status = Password::sendResetLink([
+            'email' => $validated_data['email']
+        ]);
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response(
+                [
+                    'status' => $status
+                ],
+                200
+            );
+        } else {
+            return response(
+                [
+                    'status' => $status
+                ],
+                500
+            );
+        }
+
+    }
+
+    /**
+     * パスワードリセット
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function reset_password(Request $request)
+    {
+        $credentials = request()->only(['email', 'token', 'password']);
+
+        $status = Password::reset($credentials, function (User $user, string $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+        });
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response(
+                [
+                    'status' => __($status)
+                ],
+                200
+            );
+        } else {
+            return response(
+                [
+                    'status' => __($status)
+                ],
+                500
+            );
+        }
     }
 }
