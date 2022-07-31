@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -113,22 +111,36 @@ class AuthController extends Controller
             'email' => $validated_data['email']
         ]);
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response(
+        return match ($status) {
+            'passwords.sent' => response(
                 [
-                    'status' => $status
+                    'status' => 'Success',
+                    'message' => __($status)
                 ],
                 200
-            );
-        } else {
-            return response(
+            ),
+            'passwords.throttled' => response(
                 [
-                    'status' => $status
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                429
+            ),
+            'passwords.user' => response(
+                [
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                404
+            ),
+            default => response(
+                [
+                    'status' => 'Error',
+                    'message' => 'Internal Server Error'
                 ],
                 500
-            );
-        }
-
+            ),
+        };
     }
 
     /**
@@ -139,27 +151,38 @@ class AuthController extends Controller
      */
     public function reset_password(Request $request)
     {
-        $credentials = request()->only(['email', 'token', 'password']);
+        $validated_data = $request->validate([
+            'email' => 'required|string|email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8',
+        ]);
 
-        $status = Password::reset($credentials, function (User $user, string $password) {
+        $status = Password::reset($validated_data, function (User $user, string $password) {
             $user->password = Hash::make($password);
             $user->save();
         });
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response(
+        return match ($status) {
+            'passwords.reset' => response(
                 [
-                    'status' => __($status)
+                    'status' => 'Success',
+                    'message' => __($status)
                 ],
                 200
-            );
-        } else {
-            return response(
+            ),
+            'passwords.token' => response(
                 [
-                    'status' => __($status)
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                429
+            ),
+            default => response(
+                [
+                    'status' => 'Internal Server Error'
                 ],
                 500
-            );
-        }
+            ),
+        };
     }
 }
