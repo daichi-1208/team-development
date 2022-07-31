@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bookmarks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('bookmark_id');
+            $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('genre_id');
             $table->string('url');
             $table->text('description')->nullable();
@@ -32,9 +32,9 @@ return new class extends Migration
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
-            $table->foreign('bookmark_id')
+            $table->foreign('group_id')
                 ->references('id')
-                ->on('bookmarks')
+                ->on('groups')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
