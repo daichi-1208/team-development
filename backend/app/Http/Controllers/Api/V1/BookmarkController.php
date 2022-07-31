@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bookmark;
 use Illuminate\Http\Request;
 
 class BookmarkController extends Controller
 {
+    private $bookmark;
+
+    public function __construct(Bookmark $bookmark)
+    {
+        $this->bookmark = $bookmark;
+    }
     /**
      * Display a listing of the resource.
      *
