@@ -179,7 +179,8 @@ class AuthController extends Controller
             ),
             default => response(
                 [
-                    'status' => 'Internal Server Error'
+                    'status' => 'Error',
+                    'message' => 'Internal Server Error'
                 ],
                 500
             ),
