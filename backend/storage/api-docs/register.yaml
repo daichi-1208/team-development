@@ -1,0 +1,84 @@
+post:
+  tags:
+    - auth
+  summary: ユーザー登録
+  description: ユーザー登録
+  parameters: [ ]
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            first_name:
+              description: 性
+              type: string
+              example: 山田
+            last_name:
+              description: 名
+              type: string
+              example: 太郎
+            display_name:
+              description: 表示名
+              type: string
+              example: 山田太郎
+              uniqueItems: true
+            email:
+              description: メールアドレス
+              type: string
+              example: yamada@example.com
+              uniqueItems: true
+            password:
+              description: パスワード
+              type: string
+              example: passw@rd
+              minimum: 8
+          required:
+            - first_name
+            - last_name
+            - display_name
+            - email
+            - password
+  responses:
+    200:
+      description: ユーザー登録成功
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: ステータス
+                type: string
+                example: Success
+              message:
+                description: メッセージ
+                type: string
+                example: You have been successfully Registration.
+    422:
+      description: ユーザー登録失敗
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                description: エラーメッセージ
+                type: string
+                example: The display name has already been taken. (and 1 more error)
+              errors:
+                description: エラーの詳細
+                type: object
+                properties:
+                  display_name:
+                    description: 表示名に関するエラーメッセージ
+                    type: array
+                    items:
+                      type: string
+                      example: The display name has already been taken.
+                  email:
+                    description: メールアドレスに関するエラーメッセージ
+                    type: array
+                    items:
+                      type: string
+                      example: The email has already been taken.
