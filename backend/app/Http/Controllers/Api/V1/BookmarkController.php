@@ -3,67 +3,73 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bookmark;
+use App\Services\BookmarkService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookmarkController extends Controller
 {
-    private $bookmark;
-
-    public function __construct(Bookmark $bookmark)
-    {
-        $this->bookmark = $bookmark;
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+    private $bookmarkService;
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param BookmarkService $bookmarkService
      */
-    public function store(Request $request)
+    public function __construct(BookmarkService $bookmarkService)
     {
-        //
+        $this->bookmarkService = $bookmarkService;
+    }
+    
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fetchGroupBookmarks(Request $request): JsonResponse
+    {
+        $groupId = $request->input('group_id');
+        $result = $this->bookmarkService->fetchGroupBookmarks($groupId);
+        
+        return response()->json($result);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function show($id)
+    public function fetchGroupUserBookmarks(Request $request): JsonResponse
     {
-        //
+        $groupId = $request->input('group_id');
+        $userId = $request->input('user_id');
+        $result = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
+
+        return response()->json($result);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
+    public function showBookmarkDetail(Request $request): JsonResponse
+    {
+        $bookmarkId = $request->input('bookmark_id');
+        $result = $this->bookmarkService->showBookmarkDetail($bookmarkId);
+
+        return response()->json($result);
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function createBookmark(Request $request)
+    {
+        $this->bookmarkService->createBookmark($request);
+    }
+
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
