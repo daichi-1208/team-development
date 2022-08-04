@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Bookmark extends Model
 {
     use HasFactory;
+
+    // bookmark初回作成時の公開初期値
+    public const PUBLIC_TRUE = true;
 
     protected $table = 'bookmarks';
     protected $primaryKey = 'id';
@@ -18,26 +20,6 @@ class Bookmark extends Model
         'created_at',
         'updated_at'
     ];
-
-    /**
-     * グループのブックマークを全て取得して返却
-     * @param integer $groupId
-     * @return Collection
-     */
-    public function fetchGroupBookmarks(int $groupId): Collection
-    {
-        return $this::where('group_id', '=', $groupId)->get();
-    }
-
-    /**
-     * ユーザーのブックマークを全て取得して返却
-     * @param integer $userId
-     * @return Collection
-     */
-    public function fetchUserBookmarks(int $userId): Collection
-    {
-        return $this::where('user_id', '=', $userId)->get();
-    }
 
     /**
      * リレーション
