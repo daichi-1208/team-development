@@ -1,0 +1,23 @@
+openapi: "3.0.0"
+info:
+  title: "Spin API"
+  description: "Spin Backend Service API"
+  version: "1.0.0"
+paths:
+  /api/register:
+    $ref: "register.yaml"
+  /api/login:
+    $ref: "login.yaml"
+  /api/logout:
+    $ref: "logout.yaml"
+  /api/forgot_password:
+    $ref: "forgot_password.yaml"
+  /api/reset_password:
+    $ref: "reset_password.yaml"
+
+components:
+  # Bearer認証
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer

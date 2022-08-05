@@ -7,9 +7,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
+
+    /**
+     * 新規登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function register(Request $request)
     {
         $validated_data = $request->validate([
@@ -37,6 +45,12 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * ログイン
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function login(Request $request)
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
@@ -63,6 +77,11 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * ログアウト
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function logout()
     {
         Auth::user()->tokens()->delete();
@@ -74,5 +93,97 @@ class AuthController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * パスワードリセット依頼
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function forgot_password(Request$request)
+    {
+        $validated_data = $request->validate([
+            'email' => 'required|string|email|max:255',
+        ]);
+
+        $status = Password::sendResetLink([
+            'email' => $validated_data['email']
+        ]);
+
+        return match ($status) {
+            'passwords.sent' => response(
+                [
+                    'status' => 'Success',
+                    'message' => __($status)
+                ],
+                200
+            ),
+            'passwords.throttled' => response(
+                [
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                429
+            ),
+            'passwords.user' => response(
+                [
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                404
+            ),
+            default => response(
+                [
+                    'status' => 'Error',
+                    'message' => 'Internal Server Error'
+                ],
+                500
+            ),
+        };
+    }
+
+    /**
+     * パスワードリセット
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function reset_password(Request $request)
+    {
+        $validated_data = $request->validate([
+            'email' => 'required|string|email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $status = Password::reset($validated_data, function (User $user, string $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+        });
+
+        return match ($status) {
+            'passwords.reset' => response(
+                [
+                    'status' => 'Success',
+                    'message' => __($status)
+                ],
+                200
+            ),
+            'passwords.token' => response(
+                [
+                    'status' => 'Error',
+                    'message' => __($status)
+                ],
+                429
+            ),
+            default => response(
+                [
+                    'status' => 'Error',
+                    'message' => 'Internal Server Error'
+                ],
+                500
+            ),
+        };
     }
 }
