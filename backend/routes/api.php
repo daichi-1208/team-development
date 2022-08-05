@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\BookmarkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +38,11 @@ Route::group(
         'middleware' => 'auth:sanctum'
     ],
     function () {
-        Route::apiResource('bookmarks', BookmarkController::class);
+        Route::post('bookmarks/create', [BookmarkController::class, 'createBookmark']);
+        Route::get('bookmarks/fetch_group_bookmarks', [BookmarkController::class, 'fetchGroupBookmarks']);
+        Route::get('bookmarks/fetch_group_user_bookmarks', [BookmarkController::class, 'fetchGroupUserBookmarks']);
+        Route::get('bookmarks/show', [BookmarkController::class, 'showBookmark']);
+
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
