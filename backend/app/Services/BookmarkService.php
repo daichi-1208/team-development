@@ -30,33 +30,23 @@ class BookmarkService
                         ->get();
     }
     
-    public function showBookmarkDetail(int $bookmarkId): Collection
+    public function showBookmark(int $bookmarkId): Collection
     {
         return Bookmark::where('id', '=', $bookmarkId)->get();
     }
 
     public function createBookmark(Request $request)
     {
-        try {
-            // トランザクション開始
-            DB::beginTransaction();
-
-            $this->bookmark->create([
-                'user_id'           => $request->user_id,
-                'group_id'          => $request->group_id,
-                'genre_id'          => $request->genre_id,
-                'url'               => $request->url,
-                'description'       => $request->description,
-                'meta_image_path'   => $request->meta_image_path,
-                'meta_description'  => $request->meta_description,
-                'public'            => Bookmark::PUBLIC_TRUE
-            ]);
-
-            DB::commit;
-        } catch(Throwable $e) {
-            //登録時に例外が発生したらロールバック
-            DB::rollBack();
-        }
+        $this->bookmark->create([
+            'user_id'           => $request->user_id,
+            'group_id'          => $request->group_id,
+            'genre_id'          => $request->genre_id,
+            'url'               => $request->url,
+            'description'       => $request->description,
+            'meta_image_path'   => $request->meta_image_path,
+            'meta_description'  => $request->meta_description,
+            'public'            => Bookmark::PUBLIC_TRUE
+        ]);
     }
 
     public function updateBookmark(array $data)

@@ -48,21 +48,26 @@ class BookmarkController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function showBookmarkDetail(Request $request): JsonResponse
+    public function showBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
-        $result = $this->bookmarkService->showBookmarkDetail($bookmarkId);
+        $result = $this->bookmarkService->showBookmark($bookmarkId);
 
         return response()->json($result);
     }
 
     /**
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function createBookmark(Request $request)
+    public function createBookmark(Request $request): JsonResponse
     {
         $this->bookmarkService->createBookmark($request);
+        
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Bookmark successfully created'
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -74,4 +79,5 @@ class BookmarkController extends Controller
     {
         //
     }
+
 }
