@@ -1,0 +1,60 @@
+post:
+  tags:
+    - auth
+  summary: ユーザーログイン
+  description: ユーザーログイン(ログアウトしない限りトークンは有効)
+  parameters: [ ]
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              description: メールアドレス
+              type: string
+              example: yamada@example.com
+              uniqueItems: true
+            password:
+              description: パスワード
+              type: string
+              example: passw@rd
+              minimum: 8
+          required:
+            - email
+            - password
+  responses:
+    200:
+      description: ログイン成功
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: ステータス
+                type: string
+                example: Success
+              access_token:
+                description: アクセストークン
+                type: string
+                example: 1|rGvWMqu4Jld8vkCRTxzEMS12K2VnboYdkMPB5NaB
+              token_type:
+                description: トークンタイプ
+                type: string
+                example: Bearer
+    401:
+      description: ログイン失敗
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: ステータス
+                type: string
+                example: Error
+              message:
+                description: エラーメッセージ
+                type: string
+                example: Invalid login details
