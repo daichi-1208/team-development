@@ -177,6 +177,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // OGP取得用ライブラリ
+        shweshi\OpenGraph\Providers\OpenGraphProvider::class,
+
     ],
 
     /*
