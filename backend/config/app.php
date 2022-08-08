@@ -194,7 +194,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
+        // OGP取得用ライブラリ
+        'OpenGraph' => shweshi\OpenGraph\Facades\OpenGraphFacade::class
     ])->toArray(),
 
 ];
