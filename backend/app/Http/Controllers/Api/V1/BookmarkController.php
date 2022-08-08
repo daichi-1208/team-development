@@ -20,6 +20,7 @@ class BookmarkController extends Controller
     }
     
     /**
+     * グループに属するブックマーク一覧を取得
      * @param Request $request
      * @return JsonResponse
      */
@@ -32,6 +33,7 @@ class BookmarkController extends Controller
     }
 
     /**
+     * グループに所属するユーザーが投稿したブックマーク一覧を取得
      * @param Request $request
      * @return JsonResponse
      */
@@ -45,6 +47,7 @@ class BookmarkController extends Controller
     }
 
     /**
+     * ブックマーク詳細取得
      * @param Request $request
      * @return JsonResponse
      */
@@ -57,6 +60,7 @@ class BookmarkController extends Controller
     }
 
     /**
+     * ブックマーク作成処理
      * @param Request $request
      * @return JsonResponse
      */
@@ -70,14 +74,36 @@ class BookmarkController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    /**
+     * ブックマーク更新処理
+     * @param Request $request
+     * @return void
+     */
+    public function updateBookmark(Request $request)
     {
-        //
+        $bookmarkId = $request->input('bookmark_id');
+        $this->bookmarkService->updateBookmark($bookmarkId);
+
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Bookmark successfully updated'
+        ]);
     }
 
-    public function destroy($id)
+    /**
+     * ブックマーク削除処理
+     * @param Request $request
+     * @return void
+     */
+    public function destroy(Request $request)
     {
-        //
+        $bookmarkId = $request->input('bookmark_id');
+        $this->bookmarkService->deleteBookmark($bookmarkId);
+
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Bookmark successfully updated'
+        ]);
     }
 
 }

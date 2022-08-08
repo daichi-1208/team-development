@@ -49,13 +49,20 @@ class BookmarkService
         ]);
     }
 
-    public function updateBookmark(array $data)
+    public function updateBookmark(Request $request)
     {
-        
+        $this->bookmark->update([
+            'genre_id'          => $request->genre_id,
+            'url'               => $request->url,
+            'description'       => $request->description,
+            'meta_image_path'   => $request->meta_image_path,
+            'meta_description'  => $request->meta_description,
+            'public'            => $request->public
+        ]);
     }
 
-    public function deleteBookmark(array $data)
+    public function deleteBookmark(int $bookmarkId)
     {
-        
+        $this->bookmark->where('id', $bookmarkId)->delete();
     }
 }
