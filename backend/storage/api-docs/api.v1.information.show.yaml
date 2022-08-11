@@ -1,0 +1,48 @@
+get:
+  tags:
+    - information
+  summary: 特定のIDのインフォメーション取得
+  description: 特定のIDのインフォメーション取得
+  parameters:
+    - in: path
+      name: id
+      description: 指定のIDのインフォメーション取得
+      required: true
+      schema:
+        type: integer
+  responses:
+    200:
+      description: 一覧取得成功
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: ステータス
+                type: string
+                example: Success
+              information:
+                description: インフォメーション
+                type: object
+                properties:
+                  id:
+                    description: インフォメーションID
+                    type: integer
+                    example: 1
+                  title:
+                    description: インフォメーションタイトル
+                    type: string
+                    example: メンテナンス予定
+                  description:
+                    description: インフォメーション内容
+                    type: string
+                    example: メンテナンスのためサービスを一時停止します。
+                  created_at:
+                    description: 作成日
+                    type: string
+                    example: 2022-08-09T05:21:37.000000Z
+                  updated_at:
+                    description: 作成日
+                    type: string
+                    example: 2022-08-09T05:21:39.000000Z
