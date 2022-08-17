@@ -11,6 +11,7 @@ class Bookmark extends Model
 
     // bookmark初回作成時の公開初期値
     public const PUBLIC_TRUE = true;
+    public const NO_IMAGE_URL = '';
 
     protected $table = 'bookmarks';
     protected $primaryKey = 'id';
