@@ -29,7 +29,10 @@ class BookmarkController extends Controller
         $groupId = $request->input('group_id');
         $result = $this->bookmarkService->fetchGroupBookmarks($groupId);
         
-        return response()->json($result);
+        return response()->json([
+            'status' => 'Success',
+            'data' => $result
+        ]);
     }
 
     /**
@@ -43,7 +46,10 @@ class BookmarkController extends Controller
         $userId = $request->input('user_id');
         $result = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
 
-        return response()->json($result);
+        return response()->json([
+            'status' => 'Success',
+            'data' => $result
+        ]);
     }
 
     /**
@@ -56,7 +62,10 @@ class BookmarkController extends Controller
         $bookmarkId = $request->input('bookmark_id');
         $result = $this->bookmarkService->showBookmark($bookmarkId);
 
-        return response()->json($result);
+        return response()->json([
+            'status' => 'Success',
+            'data' => $result
+        ]);
     }
 
     /**
@@ -66,20 +75,20 @@ class BookmarkController extends Controller
      */
     public function createBookmark(Request $request): JsonResponse
     {
-        $this->bookmarkService->createBookmark($request);
+        // 処理した結果をメッセージで返す
+        $message = $this->bookmarkService->createBookmark($request);
         
         return response()->json([
-            'status' => 'Success',
-            'message' => 'Bookmark successfully created'
+            'message' => $message
         ]);
     }
 
     /**
      * ブックマーク更新処理
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function updateBookmark(Request $request)
+    public function updateBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->updateBookmark($bookmarkId);
@@ -93,17 +102,16 @@ class BookmarkController extends Controller
     /**
      * ブックマーク削除処理
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function destroy(Request $request)
+    public function daleteBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->deleteBookmark($bookmarkId);
 
         return response()->json([
             'status' => 'Success',
-            'message' => 'Bookmark successfully updated'
+            'message' => 'Bookmark successfully daleted'
         ]);
     }
-
 }
