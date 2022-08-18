@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,9 @@ Route::group(
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class);
-        Route::apiResource('profiles', ProfileController::class);
+        Route::post('profiles/create', [ProfileController::class, 'createProfile']);
+        Route::post('profiles/update', [ProfileController::class, 'updateProfile']);
+        Route::get('profiles/show', [profileController::class, 'showProfile']);
     }
 );
 
