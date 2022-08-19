@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\GenreController;
+use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,7 +42,8 @@ Route::group(
         Route::apiResource('bookmarks', BookmarkController::class);
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
-        Route::apiResource('genres', GenreController::class);
+        // Genre API
+        Route::get('genres', [GenreController::class, 'fetchGenreLists']);
         Route::apiResource('groups', GroupController::class);
         Route::apiResource('profiles', ProfileController::class);
     }

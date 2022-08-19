@@ -9,6 +9,15 @@ class Genre extends Model
 {
     use HasFactory;
 
+    protected $table = 'genres';
+    protected $primaryKey = 'id';
+
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at'
+    ];
+
     /**
      * リレーション
      */
