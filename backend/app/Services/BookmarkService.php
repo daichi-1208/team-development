@@ -142,9 +142,10 @@ class BookmarkService
             $imagePath = self::NO_IMAGE_PATH;
             $description = $data['description'];
         }
-        return $resultOGP[
-            ['image_path'][$imagePath]
-            ['description'][$description]
-        ];
+
+        $resultOGP['image_path'] = $imagePath;
+        $resultOGP['description'] = $description;
+        
+        return $resultOGP;
     }
 }
