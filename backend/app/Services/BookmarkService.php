@@ -64,8 +64,8 @@ class BookmarkService
         // OGPの処理をするためにURLだけ引っこ抜く
         $referenceUrl = $request->input('url');
 
-        // OGPに関する処理を別メソッドで実行してローカルに保存したPATHを返却
-        $imagePath = $this->processOGPImage($referenceUrl);
+        // OGPに関する処理を別メソッドで実行してローカルに保存したPATHとdescriptionを返却
+        $resultOGP = $this->processOGPImage($referenceUrl);
 
         // インサート処理
         DB::beginTransaction();
@@ -76,8 +76,8 @@ class BookmarkService
                 'genre_id'          => $request->genre_id,
                 'url'               => $request->url,
                 'description'       => $request->description,
-                'meta_image_path'   => $imagePath,
-                'meta_description'  => $request->meta_description,
+                'meta_image_path'   => $resultOGP['image_path'],
+                'meta_description'  => $resultOGP['description'],
                 'public'            => Bookmark::PUBLIC_TRUE
             ]);
             // 正常に作成できたらcommit
@@ -122,13 +122,15 @@ class BookmarkService
      * @param string $referenceUrl
      * @return string
      */
-    private function processOGPImage(string $referenceUrl): string
+    private function processOGPImage(string $referenceUrl): array
     {
+        $resultOGP = [];
         // OGP取得
         $data = OpenGraph::fetch($referenceUrl);
 
         if($data['image']){
             $imageUrl = $data['image'];
+            $description = $data['description'];
             // 元画像の拡張子を引っこ抜く
             $extension = pathinfo($imageUrl,PATHINFO_EXTENSION);
             $downlordImage = file_get_contents($imageUrl);
@@ -138,7 +140,11 @@ class BookmarkService
         } else {
             // 画像なかったらデフォルト画像みたいなのを出すようにする？
             $imagePath = self::NO_IMAGE_PATH;
+            $description = $data['description'];
         }
-        return $imagePath;
+        return $resultOGP[
+            ['image_path'][$imagePath]
+            ['description'][$description]
+        ];
     }
 }
