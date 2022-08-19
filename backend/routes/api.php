@@ -42,7 +42,10 @@ Route::group(
         'middleware' => 'auth:sanctum'
     ],
     function () {
+        // Bookmark API
         Route::post('bookmarks/create', [BookmarkController::class, 'createBookmark']);
+        Route::post('bookmarks/update', [BookmarkController::class, 'updateBookmark']);
+        Route::post('bookmarks/delete', [BookmarkController::class, 'deleteBookmark']);
         Route::get('bookmarks/fetch_group_bookmarks', [BookmarkController::class, 'fetchGroupBookmarks']);
         Route::get('bookmarks/fetch_group_user_bookmarks', [BookmarkController::class, 'fetchGroupUserBookmarks']);
         Route::get('bookmarks/show', [BookmarkController::class, 'showBookmark']);

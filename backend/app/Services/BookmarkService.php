@@ -3,44 +3,62 @@
 namespace App\Services;
 
 use App\Models\Bookmark;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Throwable;
 use OpenGraph;
 use Illuminate\Support\Facades\Storage;
 
 class BookmarkService
 {
 
-    private const SAVE_IMAGE_PATH = 'Images/';
+    private const BOOKMARK_IMAGE_PATH = 'Images/';
+    private const NO_IMAGE_PATH = 'hogehoge';
 
     private $bookmark;
 
+    /**
+     * @param Bookmark $bookmark
+     */
     public function __construct(Bookmark $bookmark)
     {
         $this->bookmark = $bookmark;
     }
 
-    public function fetchGroupBookmarks(int $groupId): Collection
+    /**
+     * @param integer $groupId
+     * @return array
+     */
+    public function fetchGroupBookmarks(int $groupId): array
     {
-        return Bookmark::where('group_id', '=', $groupId)->get();
+        return Bookmark::where('group_id', '=', $groupId)->get()->toArray();
     }
 
-    public function fetchGroupUserBookmarks(int $groupId, int $userId): Collection
+    /**
+     * @param integer $groupId
+     * @param integer $userId
+     * @return array
+     */
+    public function fetchGroupUserBookmarks(int $groupId, int $userId): array
     {
         return Bookmark::where('group_id', '=', $groupId)
                         ->where('user_id', '=', $userId)
-                        ->get();
+                        ->get()
+                        ->toArray();
     }
     
-    public function showBookmark(int $bookmarkId): Collection
+    /**
+     * @param integer $bookmarkId
+     * @return array
+     */
+    public function showBookmark(int $bookmarkId): array
     {
-        return Bookmark::where('id', '=', $bookmarkId)->get();
+        return Bookmark::where('id', '=', $bookmarkId)->get()->toArray();
     }
 
-
+    /**
+     * @param Request $request
+     * @return string
+     */
     public function createBookmark(Request $request): string
     {
         // OGPの処理をするためにURLだけ引っこ抜く
@@ -65,15 +83,21 @@ class BookmarkService
             // 正常に作成できたらcommit
             DB::commit();
             // 成功ステータスを返す
-            $message = 'Bookmark successfully created';
+            $messages = 'Bookmark successfully created';
         } catch(\Exception $e) {
-            $message = $e->getMessage();
+            // laravel.logにエラーメッセージを吐く
+            logger()->info($e->getMessage());
+            // メッセージにはなにかしらで失敗した旨をつっこむ
+            $messages = 'Bookmark Failed created';
         }
-
-        return $message;
+        return $messages;
     }
 
-    public function updateBookmark(Request $request)
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function updateBookmark(Request $request): void
     {
         $this->bookmark->update([
             'genre_id'          => $request->genre_id,
@@ -85,7 +109,11 @@ class BookmarkService
         ]);
     }
 
-    public function deleteBookmark(int $bookmarkId)
+    /**
+     * @param integer $bookmarkId
+     * @return void
+     */
+    public function deleteBookmark(int $bookmarkId): void
     {
         $this->bookmark->where('id', $bookmarkId)->delete();
     }
@@ -101,16 +129,16 @@ class BookmarkService
 
         if($data['image']){
             $imageUrl = $data['image'];
+            // 元画像の拡張子を引っこ抜く
             $extension = pathinfo($imageUrl,PATHINFO_EXTENSION);
+            $downlordImage = file_get_contents($imageUrl);
+            $imagePath = self::BOOKMARK_IMAGE_PATH . uniqid() . '.' .$extension;
+            // ローカル保存処理
+            Storage::disk('public')->put($imagePath, $downlordImage);
+        } else {
+            // 画像なかったらデフォルト画像みたいなのを出すようにする？
+            $imagePath = self::NO_IMAGE_PATH;
         }
-
-        $downlordImage = file_get_contents($imageUrl);
-        $imagePath = self::SAVE_IMAGE_PATH . uniqid() . '.' .$extension;
-
-        // ローカル保存処理
-        Storage::disk('public')->put($imagePath, $downlordImage);
-
-        // ローカルに保存したimageパスを返却
         return $imagePath;
     }
 }

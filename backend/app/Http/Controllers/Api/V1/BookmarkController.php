@@ -29,10 +29,7 @@ class BookmarkController extends Controller
         $groupId = $request->input('group_id');
         $result = $this->bookmarkService->fetchGroupBookmarks($groupId);
         
-        return response()->json([
-            'status' => 'Success',
-            'data' => $result
-        ]);
+        return getJsonResponse($result);
     }
 
     /**
@@ -44,12 +41,9 @@ class BookmarkController extends Controller
     {
         $groupId = $request->input('group_id');
         $userId = $request->input('user_id');
-        $result = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
+        $data = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
 
-        return response()->json([
-            'status' => 'Success',
-            'data' => $result
-        ]);
+        return getJsonResponse($data);
     }
 
     /**
@@ -60,12 +54,9 @@ class BookmarkController extends Controller
     public function showBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
-        $result = $this->bookmarkService->showBookmark($bookmarkId);
+        $data = $this->bookmarkService->showBookmark($bookmarkId);
 
-        return response()->json([
-            'status' => 'Success',
-            'data' => $result
-        ]);
+        return getJsonResponse($data);
     }
 
     /**
@@ -76,11 +67,9 @@ class BookmarkController extends Controller
     public function createBookmark(Request $request): JsonResponse
     {
         // 処理した結果をメッセージで返す
-        $message = $this->bookmarkService->createBookmark($request);
+        $messages = $this->bookmarkService->createBookmark($request);
         
-        return response()->json([
-            'message' => $message
-        ]);
+        return getJsonMessageResponse($messages);
     }
 
     /**
@@ -93,10 +82,7 @@ class BookmarkController extends Controller
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->updateBookmark($bookmarkId);
 
-        return response()->json([
-            'status' => 'Success',
-            'message' => 'Bookmark successfully updated'
-        ]);
+        return getJsonMessageResponse('Bookmark successfully updated');
     }
 
     /**
@@ -109,9 +95,6 @@ class BookmarkController extends Controller
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->deleteBookmark($bookmarkId);
 
-        return response()->json([
-            'status' => 'Success',
-            'message' => 'Bookmark successfully daleted'
-        ]);
+        return getJsonMessageResponse('Bookmark successfully daleted');
     }
 }
