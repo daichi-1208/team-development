@@ -30,14 +30,10 @@ class GroupManageController extends Controller
         $my_groups = $this->groupManage->fetchMyGroups();
         $join_groups = $this->groupManage->fetchJoinGroups($my_groups);
 
-        return response()->json(
+        return returnMessage(true, 'Groups get successfully',
             [
-                'status' => 'Success',
-                'data' =>
-                    [
-                        'myGroups' => $my_groups,
-                        'joinGroups' => $join_groups
-                    ]
+                'myGroups' => $my_groups,
+                'joinGroups' => $join_groups
             ]
         );
     }
@@ -52,15 +48,9 @@ class GroupManageController extends Controller
     {
         $response = $this->groupManage->createGroup($request);
         if ($response) {
-            return response()->json(
-                [
-                    'status' => 'Success',
-                    'message' => 'Group successfully created',
-                    'data' => $response
-                ]
-            );
+            return returnMessage(true, 'Groups successfully created', [$response]);
         } else {
-            return $this->groupManage->returnMessage(false, 'Group failed created', 500);
+            return returnMessage(false, 'Group failed created', [], 500);
         }
     }
 
@@ -71,12 +61,12 @@ class GroupManageController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    #[NoReturn] public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
         if ($this->groupManage->updateGroup($request, $id)) {
-            return $this->groupManage->returnMessage(true, 'Group successfully updated', 200);
+            return returnMessage(true, 'Group successfully updated', []);
         } else {
-            return $this->groupManage->returnMessage(false, 'Group failed updated', 500);
+            return returnMessage(false, 'Group failed updated', [], 500);
         }
     }
 
@@ -86,12 +76,12 @@ class GroupManageController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    #[NoReturn] public function destroy(int $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         if ($this->groupManage->destroyGroup($id)) {
-            return $this->groupManage->returnMessage(true, 'Group successfully destroyed', 200);
+            return returnMessage(true, 'Group successfully destroyed', []);
         } else {
-            return $this->groupManage->returnMessage(false, 'Group failed destroyed', 500);
+            return returnMessage(false, 'Group failed destroyed', [], 500);
         }
     }
 }

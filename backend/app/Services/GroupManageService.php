@@ -32,7 +32,7 @@ class GroupManageService
         $groupData = Group::find($groupId);
 
         if (is_null($groupData)) {
-            return self::returnMessage(false, 'Record Not Found', [],404);
+            return returnMessage(false, 'Record Not Found', [],404);
         }
 
         return $groupData;
@@ -106,7 +106,7 @@ class GroupManageService
         $groupData = self::fetchGroupData($groupId);
 
         if (self::selfGroup($groupData)) {
-            return self::returnMessage(false, 'Bad Request', [],400);
+            return returnMessage(false, 'Bad Request', [],400);
         }
 
         $validated_data = $request->validate([
@@ -131,7 +131,7 @@ class GroupManageService
         $groupData = self::fetchGroupData($groupId);
 
         if (self::selfGroup($groupData)) {
-            return self::returnMessage(false, 'Bad Request', [],400);
+            return returnMessage(false, 'Bad Request', [],400);
         }
 
         return $groupData->delete();
@@ -146,28 +146,5 @@ class GroupManageService
     public function selfGroup($groupData): bool
     {
         return $groupData->user_id != Auth::id();
-    }
-
-    /**
-     * JSONメッセージ
-     *  - メッセージ送信後は、処理終了
-     *
-     * @param boolean $status
-     * @param string $message
-     * @param array|null $data
-     * @param int|null $statusCode
-     * @return JsonResponse
-     */
-    #[NoReturn] public function returnMessage(bool $status, string $message, ?array $data = [], ?int $statusCode = 200): JsonResponse
-    {
-        response()->json(
-            [
-                'status' => $status ? 'Success' : 'Error',
-                'message' => $message,
-                'data' => $data
-            ],
-            $statusCode
-        )->send();
-        exit();
     }
 }
