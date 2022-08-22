@@ -1,39 +1,27 @@
-<?php    
-/**
- * jsonのレスポンスを返す際に使うヘルパー関数群
- */
+<?php
 
-if(! function_exists('getJsonResponse')) {
-    function getJsonResponse(?array $data = [], ?int $status_code = 200)
+use Illuminate\Http\JsonResponse;
+
+if (! function_exists('returnMessage')) {
+    /**
+     * API返却用関数
+     * @param boolean $status
+     * @param string $message
+     * @param array|null $data
+     * @param integer|null $statusCode
+     * @return JsonResponse
+     */
+    function returnMessage(bool $status, string $message, ?array $data = [], ?int $statusCode = 200): JsonResponse
     {
-        $data = [
-            'data'   => $data,
-            'errors' => null,
-            'messages' => null,
-        ];
-        return response()->json($data, $status_code, [], JSON_UNESCAPED_UNICODE);
+        response()->json(
+            [
+                'status' => $status ? 'Success' : 'Error',
+                'message' => $message,
+                'data' => $data
+            ],
+            $statusCode
+        )->send();
+        exit();
     }
 }
 
-if(! function_exists('getErrorJsonResponse')) {
-    function getErrorJsonResponse(int $status_code, string $error_messages = null, ?array $errors = [])
-    {
-        $data = [
-            'data'   => [],
-            'errors' => null,
-            'messages' => $error_messages,
-        ];
-        return response()->json($data, $status_code, [], JSON_UNESCAPED_UNICODE);
-    }
-}
-
-if(! function_exists('getJsonMessageOnryResponse')) {
-    function getJsonMessageResponse(?string $messages = '', ?int $status_code = 200)
-    {
-        $data = [
-            'messages' => $messages,
-            'errors' => null,
-        ];
-        return response()->json($data, $status_code, [], JSON_UNESCAPED_UNICODE);
-    }
-}

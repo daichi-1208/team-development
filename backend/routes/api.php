@@ -57,3 +57,14 @@ Route::group(
         Route::apiResource('profiles', ProfileController::class);
     }
 );
+
+Route::group(
+    [
+        'prefix' => 'v1',
+        'namespace' => '\App\Http\Controllers\Api\V1'
+    ],
+    function () {
+        Route::apiResource('information', InformationController::class)->only(['index', 'show']);
+    }
+);
+
