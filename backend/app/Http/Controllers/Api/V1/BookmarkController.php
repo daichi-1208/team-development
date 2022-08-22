@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 class BookmarkController extends Controller
 {
     private $bookmarkService;
+    private const SUCCESS_MASSAGE = 'Bookmark API Responce Success';
+    private const FAILED_MASSAGE = 'Bookmark API Responce Failed';
 
     /**
      * @param BookmarkService $bookmarkService
@@ -29,7 +31,7 @@ class BookmarkController extends Controller
         $groupId = $request->input('group_id');
         $result = $this->bookmarkService->fetchGroupBookmarks($groupId);
         
-        return getJsonResponse($result);
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
