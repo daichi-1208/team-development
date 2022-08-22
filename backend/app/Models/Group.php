@@ -9,10 +9,12 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'uuid', 'name', 'description'];
+
     /**
      * リレーション
      */
     public function user(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 }

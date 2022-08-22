@@ -46,6 +46,18 @@ Route::group(
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class);
+        Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::apiResource('profiles', ProfileController::class);
     }
 );
+
+Route::group(
+    [
+        'prefix' => 'v1',
+        'namespace' => '\App\Http\Controllers\Api\V1'
+    ],
+    function () {
+        Route::apiResource('information', InformationController::class)->only(['index', 'show']);
+    }
+);
+
