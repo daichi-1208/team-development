@@ -48,7 +48,7 @@ class GroupManageController extends Controller
     {
         $response = $this->groupManage->createGroup($request);
         if ($response) {
-            return returnMessage(true, 'Groups successfully created', [$response]);
+            return returnMessage(true, 'Groups successfully created', $response->toArray());
         } else {
             return returnMessage(false, 'Group failed created', [], 500);
         }
