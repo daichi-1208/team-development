@@ -10,7 +10,7 @@ class Profile extends Model
     use HasFactory;
 
     // profile初回作成時の公開初期値
-    // public const PUBLIC_TRUE = true;
+    public const PUBLIC_TRUE = true;
 
     protected $table = 'profiles';
     protected $primaryKey = 'id';
