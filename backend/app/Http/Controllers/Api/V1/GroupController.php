@@ -69,6 +69,14 @@ class GroupController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $record = Group::findOrFail($id);
+        $user_ids = $record->user()->get()->pluck('id');
+
+        if ($user_ids->contains(Auth::id())) {
+            $record->user()->detach(Auth::id());
+            return returnMessage(true, 'success leave the group', $record->toArray());
+        } else {
+            return returnMessage(false, 'already leave the group', [], 409);
+        }
     }
 }
