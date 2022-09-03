@@ -45,7 +45,7 @@ Route::group(
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
-        Route::apiResource('groups', GroupController::class);
+        Route::apiResource('groups', GroupController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::apiResource('profiles', ProfileController::class);
     }
