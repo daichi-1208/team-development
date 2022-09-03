@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
@@ -25,7 +27,15 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $record = Group::where('uuid', $request->uuid)->first();
+        $user_ids = $record->user()->get()->pluck('id');
+
+        if (!$user_ids->contains(Auth::id())) {
+            $record->user()->attach(Auth::id());
+            return returnMessage(true, 'Group successfully joined', $record->toArray());
+        } else {
+            return returnMessage(false, 'Group failed already joined', [], 409);
+        }
     }
 
     /**
