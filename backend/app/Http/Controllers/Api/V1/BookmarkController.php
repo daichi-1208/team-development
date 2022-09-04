@@ -43,9 +43,9 @@ class BookmarkController extends Controller
     {
         $groupId = $request->input('group_id');
         $userId = $request->input('user_id');
-        $data = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
+        $result = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
 
-        return getJsonResponse($data);
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
@@ -56,9 +56,9 @@ class BookmarkController extends Controller
     public function showBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
-        $data = $this->bookmarkService->showBookmark($bookmarkId);
+        $result = $this->bookmarkService->showBookmark($bookmarkId);
 
-        return getJsonResponse($data);
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
@@ -68,10 +68,8 @@ class BookmarkController extends Controller
      */
     public function createBookmark(Request $request): JsonResponse
     {
-        // 処理した結果をメッセージで返す
-        $messages = $this->bookmarkService->createBookmark($request);
-        
-        return getJsonMessageResponse($messages);
+        $this->bookmarkService->createBookmark($request);
+        return returnMessage(true, self::SUCCESS_MASSAGE);
     }
 
     /**
@@ -84,7 +82,7 @@ class BookmarkController extends Controller
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->updateBookmark($bookmarkId);
 
-        return getJsonMessageResponse('Bookmark successfully updated');
+        return returnMessage(true, self::SUCCESS_MASSAGE);
     }
 
     /**
@@ -92,11 +90,11 @@ class BookmarkController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function daleteBookmark(Request $request): JsonResponse
+    public function deleteBookmark(Request $request): JsonResponse
     {
         $bookmarkId = $request->input('bookmark_id');
         $this->bookmarkService->deleteBookmark($bookmarkId);
 
-        return getJsonMessageResponse('Bookmark successfully daleted');
+        return returnMessage(true, self::SUCCESS_MASSAGE);
     }
 }
