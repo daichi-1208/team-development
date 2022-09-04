@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProfileService
@@ -36,22 +37,17 @@ class ProfileService
      */
     public function createProfile(Request $request): string
     {
-        // インサート処理
         DB::beginTransaction();
         try {
             $this->profile->create([
-                'user_id'           => $request->user_id,
+                'user_id'           => Auth::id(),
                 'self_introduction' => $request->self_introduction,
                 'public'            => Profile::PUBLIC_TRUE
             ]);
-            // 正常に作成できたらcommit
             DB::commit();
-            // 成功ステータスを返す
             $messages = 'Profile successfully created';
         } catch(\Exception $e) {
-            // laravel.logにエラーメッセージを吐く
             logger()->info($e->getMessage());
-            // メッセージにはなにかしらで失敗した旨をつっこむ
             $messages = 'Profile Failed created';
         }
         return $messages;

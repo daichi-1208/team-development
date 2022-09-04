@@ -43,7 +43,6 @@ class ProfileController extends Controller
      */
     public function createProfile(Request $request): JsonResponse
     {
-        // 処理した結果をメッセージで返す
         $messages = $this->profileService->createProfile($request);
 
         return getJsonMessageResponse($messages);
@@ -57,8 +56,7 @@ class ProfileController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $userId = $request->input('user_id');
-        $this->profileService->updateProfile($userId);
+        $this->profileService->updateProfile($request);
 
         return getJsonMessageResponse('Profile successfully updated');
     }
