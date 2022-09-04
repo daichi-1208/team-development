@@ -1,0 +1,35 @@
+post:
+  tags:
+    - auth
+  summary: ログアウト
+  description: ユーザーログアウト
+  parameters: [ ]
+  security:
+    - Bearer: [ ]
+  responses:
+    200:
+      description: ログアウト成功
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: ステータス
+                type: string
+                example: Success
+              access_token:
+                description: メッセージ
+                type: string
+                example: You have been successfully logged out.
+    401:
+      description: ログアウト失敗
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                description: エラーメッセージ
+                type: string
+                example: Unauthenticated.
