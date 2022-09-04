@@ -3,62 +3,98 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\BookmarkService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookmarkController extends Controller
 {
+    private $bookmarkService;
+    private const SUCCESS_MASSAGE = 'Bookmark API Responce Success';
+    private const FAILED_MASSAGE = 'Bookmark API Responce Failed';
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param BookmarkService $bookmarkService
      */
-    public function index()
+    public function __construct(BookmarkService $bookmarkService)
     {
-        //
+        $this->bookmarkService = $bookmarkService;
+    }
+    
+    /**
+     * グループに属するブックマーク一覧を取得
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fetchGroupBookmarks(Request $request): JsonResponse
+    {
+        $groupId = $request->input('group_id');
+        $result = $this->bookmarkService->fetchGroupBookmarks($groupId);
+        
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * グループに所属するユーザーが投稿したブックマーク一覧を取得
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function fetchGroupUserBookmarks(Request $request): JsonResponse
     {
-        //
+        $groupId = $request->input('group_id');
+        $userId = $request->input('user_id');
+        $result = $this->bookmarkService->fetchGroupUserBookmarks($groupId, $userId);
+
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * ブックマーク詳細取得
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function show($id)
+    public function showBookmark(Request $request): JsonResponse
     {
-        //
+        $bookmarkId = $request->input('bookmark_id');
+        $result = $this->bookmarkService->showBookmark($bookmarkId);
+
+        return returnMessage(true, self::SUCCESS_MASSAGE, $result);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * ブックマーク作成処理
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function createBookmark(Request $request): JsonResponse
     {
-        //
+        $this->bookmarkService->createBookmark($request);
+        return returnMessage(true, self::SUCCESS_MASSAGE);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * ブックマーク更新処理
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function updateBookmark(Request $request): JsonResponse
     {
-        //
+        $bookmarkId = $request->input('bookmark_id');
+        $this->bookmarkService->updateBookmark($bookmarkId);
+
+        return returnMessage(true, self::SUCCESS_MASSAGE);
+    }
+
+    /**
+     * ブックマーク削除処理
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deleteBookmark(Request $request): JsonResponse
+    {
+        $bookmarkId = $request->input('bookmark_id');
+        $this->bookmarkService->deleteBookmark($bookmarkId);
+
+        return returnMessage(true, self::SUCCESS_MASSAGE);
     }
 }

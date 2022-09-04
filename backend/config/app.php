@@ -177,6 +177,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // OGP取得用ライブラリ
+        shweshi\OpenGraph\Providers\OpenGraphProvider::class,
+
     ],
 
     /*
@@ -191,7 +194,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
+        // OGP取得用ライブラリ
+        'OpenGraph' => shweshi\OpenGraph\Facades\OpenGraphFacade::class
     ])->toArray(),
 
 ];
