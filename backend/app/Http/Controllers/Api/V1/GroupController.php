@@ -46,7 +46,10 @@ class GroupController extends Controller
      */
     public function show($id)
     {
-        //
+        $group = Group::findOrFail($id);
+
+            return returnMessage(true,'success',$group->toArray());
+
     }
 
     /**
@@ -58,7 +61,13 @@ class GroupController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $group = Group::findOrFail($id);
+
+        $group->name = is_null($request->name) ? $group->name : $request->name;
+        $group->description = is_null($request->description) ? $group->description : $request->description;
+        $group->save();
+
+        return returnMessage(true,"successly update group", $group->toArray());
     }
 
     /**
