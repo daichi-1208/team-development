@@ -16,9 +16,10 @@ class InviteMail extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($name,$email)
     {
-        //
+        $this->name = $name;
+        $this->email = $email;
     }
 
     /**
@@ -28,6 +29,7 @@ class InviteMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->to($this->email)
+        ->subject('email send success');
     }
 }
