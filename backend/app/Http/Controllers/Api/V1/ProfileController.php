@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
     private $profileService;
-    private const SUCCESS_MASSAGE = 'Profile API Responce Success';
-    private const FAILED_MASSAGE = 'Profile API Responce Failed';
+    private const SUCCESS_MASSAGE = 'Profile API Response Success';
+    private const FAILED_MASSAGE = 'Profile API Response Failed';
 
     /**
      * @param ProfileService $profileService
@@ -32,7 +32,7 @@ class ProfileController extends Controller
         $userId = $request->input('user_id');
         $data = $this->profileService->showProfile($userId);
 
-        return getJsonResponse($data);
+        return returnMessage(true, 'Success', $data);
     }
 
     /**
@@ -45,7 +45,7 @@ class ProfileController extends Controller
     {
         $messages = $this->profileService->createProfile($request);
 
-        return getJsonMessageResponse($messages);
+        return returnMessage(true, $messages);
     }
 
     /**
@@ -58,6 +58,6 @@ class ProfileController extends Controller
     {
         $this->profileService->updateProfile($request);
 
-        return getJsonMessageResponse('Profile successfully updated');
+        return returnMessage(true, 'Profile successfully updated');
     }
 }
