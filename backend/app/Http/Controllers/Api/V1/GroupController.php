@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Mail\InviteMail;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class GroupController extends Controller
 {
@@ -27,12 +30,14 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $record = Group::where('uuid', $request->uuid)->first();
+        $record = Group::where('user_id', Auth::id())->first();
         $user_ids = $record->user()->get()->pluck('id');
+        $invite_user = User::where('email', $request->email)->first();;
 
-        if (!$user_ids->contains(Auth::id())) {
-            $record->user()->attach(Auth::id());
-            return returnMessage(true, 'Group successfully joined', $record->toArray());
+        if (!$user_ids->contains($invite_user->id)) {
+            $record->user()->attach($invite_user->id);
+            Mail::send(new InviteMail($invite_user->first_name,$invite_user->email,$record->name));
+            return returnMessage(true, 'Group successfully joined');
         } else {
             return returnMessage(false, 'Group failed already joined', [], 409);
         }
