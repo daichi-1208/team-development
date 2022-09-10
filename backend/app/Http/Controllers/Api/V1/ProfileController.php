@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
     private $profileService;
-    private const SUCCESS_MASSAGE = 'Profile API Response Success';
-    private const FAILED_MASSAGE = 'Profile API Response Failed';
+    // private const SUCCESS_MASSAGE = 'Profile API Response Success';
+    // private const FAILED_MASSAGE = 'Profile API Response Failed';
 
     /**
      * @param ProfileService $profileService
@@ -32,7 +32,11 @@ class ProfileController extends Controller
         $userId = $request->input('user_id');
         $data = $this->profileService->showProfile($userId);
 
-        return returnMessage(true, 'Success', $data);
+        if (!empty($data)) {
+            return returnMessage(true, 'Profile successfully showed', $data, 200);
+        } else {
+            return returnMessage(false, 'Profile Failed showed', [], 520);
+        }
     }
 
     /**
@@ -45,7 +49,11 @@ class ProfileController extends Controller
     {
         $messages = $this->profileService->createProfile($request);
 
-        return returnMessage(true, $messages);
+        if ($messages == 'Profile successfully created') {
+            return returnMessage(true, $messages);
+        } elseif ($messages == 'Profile Failed created') {
+            return returnMessage(false, $messages, [], 521);
+        }
     }
 
     /**
@@ -56,8 +64,12 @@ class ProfileController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $this->profileService->updateProfile($request);
+        $messages = $this->profileService->updateProfile($request);
 
-        return returnMessage(true, 'Profile successfully updated');
+        if ($messages == 'Profile successfully updated') {
+            return returnMessage(true, 'Profile successfully updated');
+        } elseif ($messages == 'Profile Failed updated') {
+            return returnMessage(false, 'Profile Failed updated', [], 522);
+        }
     }
 }

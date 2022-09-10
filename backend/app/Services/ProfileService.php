@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class ProfileService
 {
-    private const PROFILE_IMAGE_PATH = 'Images/';
-    private const NO_IMAGE_PATH = 'hogehoge';
+    // private const PROFILE_IMAGE_PATH = 'Images/';
+    // private const NO_IMAGE_PATH = 'hogehoge';
 
     private $profile;
 
@@ -28,7 +28,11 @@ class ProfileService
      */
     public function showProfile(int $userId): array
     {
-        return Profile::where('user_id', '=', $userId)->get()->toArray();
+        try {
+            return Profile::where('user_id', '=', $userId)->get()->toArray();
+        } catch(\Exception $e) {
+            logger()->info($e->getMessage());
+        }
     }
 
     /**
@@ -50,18 +54,29 @@ class ProfileService
             logger()->info($e->getMessage());
             $messages = 'Profile Failed created';
         }
+
         return $messages;
     }
 
     /**
      * @param Request $request
-     * @return void
+     * @return string
      */
-    public function updateProfile(Request $request): void
+    public function updateProfile(Request $request): string
     {
-        $this->profile->update([
-            'self_introduction' => $request->self_introduction,
-            'public'            => $request->public
-        ]);
+        try {
+            $this->profile  
+                ->where('user_id', '=', Auth::id())
+                ->update([
+                    'self_introduction' => $request->self_introduction,
+                    'public'            => $request->public
+                ]);
+            $messages = 'Profile successfully updated';
+        } catch(\Exception $e) {
+            logger()->info($e->getMessage());
+            $messages = 'Profile Failed updated';
+        }
+        
+        return $messages;
     }
 } 

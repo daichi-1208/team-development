@@ -48,9 +48,9 @@ Route::group(
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class);
         Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('profiles/show', [profileController::class, 'showProfile']);
         Route::post('profiles/create', [ProfileController::class, 'createProfile']);
         Route::post('profiles/update', [ProfileController::class, 'updateProfile']);
-        Route::get('profiles/show', [profileController::class, 'showProfile']);
     }
 );
 
