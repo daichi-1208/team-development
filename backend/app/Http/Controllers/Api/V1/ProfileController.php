@@ -35,7 +35,7 @@ class ProfileController extends Controller
         if (!empty($data)) {
             return returnMessage(true, 'Profile successfully showed', $data, 200);
         } else {
-            return returnMessage(false, 'Profile Failed showed', [], 520);
+            return returnMessage(false, 'Profile Failed showed', [], 500);
         }
     }
 
@@ -52,7 +52,7 @@ class ProfileController extends Controller
         if ($messages == 'Profile successfully created') {
             return returnMessage(true, $messages);
         } elseif ($messages == 'Profile Failed created') {
-            return returnMessage(false, $messages, [], 521);
+            return returnMessage(false, $messages, [], 500);
         }
     }
 
@@ -64,12 +64,13 @@ class ProfileController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $messages = $this->profileService->updateProfile($request);
+        $userId = $request->input('user_id');
+        $messages = $this->profileService->updateProfile($request, $userId);
 
         if ($messages == 'Profile successfully updated') {
             return returnMessage(true, 'Profile successfully updated');
         } elseif ($messages == 'Profile Failed updated') {
-            return returnMessage(false, 'Profile Failed updated', [], 522);
+            return returnMessage(false, 'Profile Failed updated', [], 500);
         }
     }
 }

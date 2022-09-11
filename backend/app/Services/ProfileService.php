@@ -62,11 +62,11 @@ class ProfileService
      * @param Request $request
      * @return string
      */
-    public function updateProfile(Request $request): string
+    public function updateProfile(Request $request, $userId): string
     {
         try {
             $this->profile  
-                ->where('user_id', '=', Auth::id())
+                ->where('user_id', '=', $userId)
                 ->update([
                     'self_introduction' => $request->self_introduction,
                     'public'            => $request->public
