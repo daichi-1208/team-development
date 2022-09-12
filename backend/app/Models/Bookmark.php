@@ -36,4 +36,8 @@ class Bookmark extends Model
     public function tag(){
         return $this->belongsToMany(Tag::class, 'taggable');
     }
+
+    public function comments() {
+        return $this->hasMany(Comment::class);
+    }
 }
