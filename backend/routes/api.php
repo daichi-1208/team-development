@@ -46,6 +46,7 @@ Route::group(
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class);
+        Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::apiResource('profiles', ProfileController::class);
     }
 );
