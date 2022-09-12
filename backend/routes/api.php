@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\GroupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,7 +46,9 @@ Route::group(
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
         Route::apiResource('genres', GenreController::class);
-        Route::apiResource('groups', GroupController::class)->only(['show', 'store', 'update', 'destroy']);
+        Route::apiResource('groups', GroupController::class)->only(['show', 'update', 'destroy']);
+        Route::post('groups/inviteUser/{id}',[GroupController::class,'inviteUser']);
+        Route::post('groups/joinGroup/{id}',[GroupController::class,'joinGroup']);
         Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::apiResource('profiles', ProfileController::class);
     }
