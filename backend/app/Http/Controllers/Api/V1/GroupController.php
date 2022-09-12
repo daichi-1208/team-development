@@ -23,7 +23,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 招待メール機能
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -31,21 +31,22 @@ class GroupController extends Controller
     public function inviteUser(Request $request)
     {
         $record = Group::where('user_id', Auth::id())->first();
+        $group_owner = User::findOrFail(Auth::id());
         $user_ids = $record->user()->get()->pluck('id');
         $invite_user = User::where('email', $request->email)->first();
         $invite_url = "http://127.0.0.1:8080/api/v1/groups/joinGroup/{$record->id}";
 
         if (!$user_ids->contains($invite_user->id)) {
             // $record->user()->attach($invite_user->id);
-            Mail::send(new InviteMail($invite_user->first_name,$invite_user->email,$record->name,$invite_url));
+            Mail::send(new InviteMail($invite_user,$record,$invite_url,$group_owner));
             return returnMessage(true, 'Group successfully joined');
         } else {
             return returnMessage(false, 'Group failed already joined', [], 409);
         }
     }
 
-        /**
-     * Store a newly created resource in storage.
+    /**
+     * 招待メール経由でメンバーを追加する
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -61,7 +62,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * グループの詳細を取得
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -75,7 +76,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * グループの更新情報を取得し、更新処理を行う
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -93,7 +94,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * グループに所属するユーザーを取得し、該当のユーザーを削除する
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
