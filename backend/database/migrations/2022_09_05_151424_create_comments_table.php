@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bookmark_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('bookmark_id')->unsigned();
+            $table->unsignedBigInteger('user_id')->unsigned();
             $table->string('comment')->comment('コメント本文');
             $table->boolean('is_publish')->default(true)->comment('公開・非公開');
             $table->timestamps();
