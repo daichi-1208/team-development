@@ -16,11 +16,12 @@ class InviteMail extends Mailable
      *
      * @return void
      */
-    public function __construct($user_name,$user_email,$group_name)
+    public function __construct($user_name,$user_email,$group_name,$invite_url)
     {
         $this->user_name = $user_name;
         $this->user_email = $user_email;
         $this->group_name = $group_name;
+        $this->invite_url = $invite_url;
     }
 
     /**
@@ -36,6 +37,7 @@ class InviteMail extends Mailable
         ->with([
             'name' => $this->user_name,
             'group_name' => $this->group_name,
+            'invite_url' => $this->invite_url,
         ]);
     }
 }

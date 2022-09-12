@@ -28,19 +28,36 @@ class GroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function inviteUser(Request $request)
     {
         $record = Group::where('user_id', Auth::id())->first();
         $user_ids = $record->user()->get()->pluck('id');
-        $invite_user = User::where('email', $request->email)->first();;
+        $invite_user = User::where('email', $request->email)->first();
+        $invite_url = "http://127.0.0.1:8080/api/v1/groups/joinGroup/{$record->id}";
 
         if (!$user_ids->contains($invite_user->id)) {
-            $record->user()->attach($invite_user->id);
-            Mail::send(new InviteMail($invite_user->first_name,$invite_user->email,$record->name));
+            // $record->user()->attach($invite_user->id);
+            Mail::send(new InviteMail($invite_user->first_name,$invite_user->email,$record->name,$invite_url));
             return returnMessage(true, 'Group successfully joined');
         } else {
             return returnMessage(false, 'Group failed already joined', [], 409);
         }
+    }
+
+        /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function joinGroup(Request $request)
+    {
+        $joinGroup = Group::findOrfail($request->id);
+        $invite_user_id = Auth::id();
+
+        $joinGroup->user()->attach($invite_user_id);
+
+        return returnMessage("true","success");
     }
 
     /**
