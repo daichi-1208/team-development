@@ -11,6 +11,17 @@ services:
     volumes:
       - ./tmp/mysql/data:/var/lib/mysql
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - "4040:80"
+    volumes:
+      - ./docker/phpmyadmin/sessions:/sessions
+
   mail:
     image: mailhog/mailhog
     ports:
