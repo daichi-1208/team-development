@@ -6,33 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Mail\InviteMail;
 use App\Models\Group;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\GroupService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class GroupController extends Controller
 {
+    private GroupService $group;
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param GroupService $group_manage
      */
-    public function index()
+    public function __construct(GroupService $group)
     {
-        //
+        $this->group = $group;
     }
 
     /**
      * 招待メール機能
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function inviteUser(Request $request)
+    public function inviteUser(Request $request): JsonResponse
     {
         $record = Group::where('user_id', Auth::id())->first();
         $group_owner = User::findOrFail(Auth::id());
         $user_ids = $record->user()->get()->pluck('id');
+        // $user_ids = $this->group->fetchGroupUserIds($record->id);
         $invite_user = User::where('email', $request->email)->first();
         $invite_url = "http://127.0.0.1:8080/api/v1/groups/joinGroup/{$record->id}";
 
@@ -49,9 +52,9 @@ class GroupController extends Controller
      * 招待メール経由でメンバーを追加する
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function joinGroup(Request $request)
+    public function joinGroup(Request $request): JsonResponse
     {
         $joinGroup = Group::findOrfail($request->id);
         $invite_user_id = Auth::id();
@@ -65,11 +68,11 @@ class GroupController extends Controller
      * グループの詳細を取得
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        $group = Group::findOrFail($id);
+        $group = $this->group->getGroup($id);
 
             return returnMessage(true,'success',$group->toArray());
 
@@ -80,11 +83,11 @@ class GroupController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        $group = Group::findOrFail($id);
+        $group = $this->group->getGroup($id);
 
         $group->name = is_null($request->name) ? $group->name : $request->name;
         $group->description = is_null($request->description) ? $group->description : $request->description;
@@ -97,12 +100,12 @@ class GroupController extends Controller
      * グループに所属するユーザーを取得し、該当のユーザーを削除する
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $record = Group::findOrFail($id);
-        $user_ids = $record->user()->get()->pluck('id');
+        $record = $this->group->getGroup($id);
+        $user_ids = $this->group->fetchGroupUserIds($record->id);
 
         if ($user_ids->contains(Auth::id())) {
             $record->user()->detach(Auth::id());
