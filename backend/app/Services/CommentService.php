@@ -3,9 +3,25 @@
 namespace App\Services;
 
 use App\Models\Comment;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 class CommentService
 {
+
+    private $comment;
+
+    /**
+     * @param Comment $comment
+     */
+    public function __construct(Comment $comment)
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * @param integer $bookmarkId
+     * @return array
+     */
     public function fetchBookmarkComments(int $bookmarkId): array
     {
         return Comment::where('bookmark_id', '=', $bookmarkId)
@@ -17,9 +33,13 @@ class CommentService
     public function fetchUserOnlyComments()
     {
         // ブックマークに紐づいた自分が投稿したコメントだけが見えるやつ(公開・非公開があるため)
-        // 一旦なしでいいかも？
+        // 一旦なしでいいかも？保留
     }
 
+    /**
+     * @param Request $request
+     * @return string
+     */
     public function createComment(Request $request): string
     {
         // インサート処理
@@ -27,7 +47,7 @@ class CommentService
         try {
             $this->comment->create([
                 'bookmark_id' => $request->bookmark_id,
-                'user_id'     => $request->user_id,
+                'user_id'     => Auth::id(),
                 'comment'     => $request->comment,
                 'is_publish'  => $request->is_publish,
             ]);
@@ -41,17 +61,30 @@ class CommentService
             // メッセージにはなにかしらで失敗した旨をつっこむ
             $messages = 'Comment Failed created';
         }
-        
+
         return $messages;
     }
 
-    public function updateComment()
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function updateComment(Request $request): void
     {
-        // 名前の通り
+        $updateComment = $this->comment->find($request->id);
+
+        $updateComment->comment = $request->comment;
+        $updateComment->is_publish = $request->is_publish;
+
+        $updateComment->save();
     }
 
-    public function deleteComment()
+    /**
+     * @param integer $commentId
+     * @return void
+     */
+    public function deleteComment(int $commentId): void
     {
-        // 名前の通り
+        $this->comment->where('id', $commentId)->delete();
     }
 }
