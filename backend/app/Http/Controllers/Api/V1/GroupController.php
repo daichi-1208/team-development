@@ -87,13 +87,13 @@ class GroupController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
-        $group = $this->group->getGroup($id);
+        $group = $this->group->updateGroup($request, $id);
 
-        $group->name = is_null($request->name) ? $group->name : $request->name;
-        $group->description = is_null($request->description) ? $group->description : $request->description;
-        $group->save();
-
-        return returnMessage(true,"successly update group", $group->toArray());
+        if($group){
+            return returnMessage(true,"successly update group",[]);
+        }else{
+            return returnMessage(false, "failed update group", [],500);
+        }
     }
 
     /**

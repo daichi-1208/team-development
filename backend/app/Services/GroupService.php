@@ -48,4 +48,35 @@ class GroupService
         return self::getGroup($id)->user()->get()->pluck('id');
     }
 
+        /**
+     * グループ情報のアップデート
+     *
+     * @param $request
+     * @param int $groupId
+     * @return JsonResponse|bool
+     */
+    public function updateGroup($request, int $groupId): JsonResponse|bool
+    {
+        $groupData = self::getGroup($groupId);
+
+        if (self::selfGroup($groupData)) {
+            return returnMessage(false, 'Bad Request', [],400);
+        }
+
+        $groupData->name = is_null($request->name) ? $groupData->name : $request->name;
+        $groupData->description = is_null($request->description) ? $groupData->description : $request->description;
+        return $groupData->save();
+    }
+
+        /**
+     * グループが自分自身のものか確認
+     *
+     * @param $groupData
+     * @return bool
+     */
+    public function selfGroup($groupData): bool
+    {
+        return $groupData->user_id != Auth::id();
+    }
+
 }
