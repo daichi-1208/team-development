@@ -32,20 +32,13 @@ class GroupController extends Controller
      */
     public function inviteUser(Request $request): JsonResponse
     {
-        $record = Group::where('user_id', Auth::id())->first();
-        $group_owner = User::findOrFail(Auth::id());
-        $user_ids = $record->user()->get()->pluck('id');
-        // $user_ids = $this->group->fetchGroupUserIds($record->id);
-        $invite_user = User::where('email', $request->email)->first();
-        $invite_url = "http://127.0.0.1:8080/api/v1/groups/joinGroup/{$record->id}";
 
-        if (!$user_ids->contains($invite_user->id)) {
-            // $record->user()->attach($invite_user->id);
-            Mail::send(new InviteMail($invite_user,$record,$invite_url,$group_owner));
+        if ($this->group->inviteUser($request)) {
             return returnMessage(true, 'Group successfully joined');
         } else {
             return returnMessage(false, 'Group failed already joined', [], 409);
         }
+
     }
 
     /**
@@ -61,7 +54,7 @@ class GroupController extends Controller
 
         $joinGroup->user()->attach($invite_user_id);
 
-        return returnMessage("true","success");
+        return returnMessage(true,"success");
     }
 
     /**

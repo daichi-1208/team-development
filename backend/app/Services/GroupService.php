@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
+use App\Mail\InviteMail;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use JetBrains\PhpStorm\NoReturn;
-use Ramsey\Uuid\Uuid;
+
 use Throwable;
 
 class GroupService
@@ -41,9 +44,9 @@ class GroupService
     /**
      * グループに所属するユーザーのidを取得
      *
-     * @return Collection
+     * 
      */
-    public function fetchGroupUserIds($id): Collection
+    public function fetchGroupUserIds($id)
     {
         return self::getGroup($id)->user()->get()->pluck('id');
     }
@@ -66,6 +69,29 @@ class GroupService
         $groupData->name = is_null($request->name) ? $groupData->name : $request->name;
         $groupData->description = is_null($request->description) ? $groupData->description : $request->description;
         return $groupData->save();
+    }
+
+    /**
+     *ユーザー招待メールの送信 
+     *
+     * @param $request
+     * @param int $groupId
+     * @return JsonResponse|bool
+     */
+    public function inviteUser($request): JsonResponse|bool
+    {
+        $record = Group::where('user_id', Auth::id())->first();
+        $group_owner = User::findOrFail(Auth::id());
+        $user_ids = self::fetchGroupUserIds($record->id);
+        $invite_user = User::where('email', $request->email)->first();
+        $invite_url = "http://127.0.0.1:8080/api/v1/groups/joinGroup/{$record->id}";
+
+        if (!$user_ids->contains($invite_user->id)) {
+            Mail::send(new InviteMail($invite_user,$record,$invite_url,$group_owner));
+            return true;
+        } else {
+            return false;
+        }
     }
 
         /**
