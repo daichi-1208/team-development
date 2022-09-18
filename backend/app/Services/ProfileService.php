@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProfileService
 {
-    // private const PROFILE_IMAGE_PATH = 'Images/';
-    // private const NO_IMAGE_PATH = 'hogehoge';
-
     private $profile;
 
     /**
@@ -45,8 +42,7 @@ class ProfileService
         try {
             $this->profile->create([
                 'user_id'           => Auth::id(),
-                'self_introduction' => $request->self_introduction,
-                'public'            => Profile::PUBLIC_TRUE
+                'self_introduction' => $request->self_introduction
             ]);
             DB::commit();
             $messages = 'Profile successfully created';
@@ -62,14 +58,13 @@ class ProfileService
      * @param Request $request
      * @return string
      */
-    public function updateProfile(Request $request, $userId): string
+    public function updateProfile(Request $request,): string
     {
         try {
             $this->profile  
-                ->where('user_id', '=', $userId)
+                ->where('user_id', '=', Auth::id())
                 ->update([
-                    'self_introduction' => $request->self_introduction,
-                    'public'            => $request->public
+                    'self_introduction' => $request->self_introduction
                 ]);
             $messages = 'Profile successfully updated';
         } catch(\Exception $e) {

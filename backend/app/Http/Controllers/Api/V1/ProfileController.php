@@ -64,8 +64,7 @@ class ProfileController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $userId = $request->input('user_id');
-        $messages = $this->profileService->updateProfile($request, $userId);
+        $messages = $this->profileService->updateProfile($request);
 
         if ($messages == 'Profile successfully updated') {
             return returnMessage(true, 'Profile successfully updated');
