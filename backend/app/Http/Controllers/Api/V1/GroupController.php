@@ -47,9 +47,9 @@ class GroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return JsonResponse
      */
-    public function joinGroup(Request $request): JsonResponse
+    public function joinGroup($uuid): JsonResponse
     {
-        $joinGroup = Group::where("uuid",$request->uuid)->first();
+        $joinGroup = Group::where("uuid",$uuid)->first();
         // $joinGroup = Group::findOrfail($request->id);
         $user_ids = $this->group->fetchGroupUserIds($joinGroup->id);
         $invite_user = User::findOrFail(Auth::id());
