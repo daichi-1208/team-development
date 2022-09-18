@@ -49,12 +49,21 @@ class GroupController extends Controller
      */
     public function joinGroup(Request $request): JsonResponse
     {
-        $joinGroup = Group::findOrfail($request->id);
-        $invite_user_id = Auth::id();
+        $joinGroup = Group::where("uuid",$request->uuid)->first();
+        // $joinGroup = Group::findOrfail($request->id);
+        $user_ids = $this->group->fetchGroupUserIds($joinGroup->id);
+        $invite_user = User::findOrFail(Auth::id());
 
-        $joinGroup->user()->attach($invite_user_id);
+        if (!$user_ids->contains($invite_user->id)) {
+            $joinGroup->user()->attach($invite_user->id);
+            return returnMessage(true,"success");
+        } else {
+            return returnMessage(false,"failed");
+        }
 
-        return returnMessage(true,"success");
+        // $joinGroup->user()->attach($invite_user_id);
+
+
     }
 
     /**
