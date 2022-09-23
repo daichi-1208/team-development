@@ -5,6 +5,7 @@ use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\BookmarkController;
+use App\Http\Controllers\Api\V1\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,11 @@ Route::group(
         Route::get('genres', [GenreController::class, 'fetchGenreLists']);
         Route::apiResource('groups', GroupController::class);
         Route::apiResource('profiles', ProfileController::class);
+        // Comment API
+        Route::post('comments/create', [CommentController::class, 'createComment']);
+        Route::post('comments/update', [CommentController::class, 'updateComment']);
+        Route::post('comments/delete', [CommentController::class, 'deleteComment']);
+        Route::get('comments/fetch_bookmark_comment', [CommentController::class, 'fetchBookmarkComments']);
     }
 );
 

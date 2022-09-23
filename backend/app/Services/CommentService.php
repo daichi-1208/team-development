@@ -40,7 +40,7 @@ class CommentService
      * @param Request $request
      * @return string
      */
-    public function createComment(Request $request): string
+    public function createComment($request): string
     {
         // インサート処理
         DB::beginTransaction();
@@ -57,7 +57,7 @@ class CommentService
             $messages = 'Comment successfully created';
         } catch(\Exception $e) {
             // laravel.logにエラーメッセージを吐く
-            logger()->info($e->getMessage());
+            logger()->error($e->getMessage());
             // メッセージにはなにかしらで失敗した旨をつっこむ
             $messages = 'Comment Failed created';
         }
@@ -69,7 +69,7 @@ class CommentService
      * @param Request $request
      * @return void
      */
-    public function updateComment(Request $request): void
+    public function updateComment($request): void
     {
         $updateComment = $this->comment->find($request->id);
 
