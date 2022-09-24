@@ -50,7 +50,6 @@ class GroupController extends Controller
     public function joinGroup($uuid): JsonResponse
     {
         $joinGroup = Group::where("uuid",$uuid)->first();
-        // $joinGroup = Group::findOrfail($request->id);
         $user_ids = $this->group->fetchGroupUserIds($joinGroup->id);
         $invite_user = User::findOrFail(Auth::id());
 
@@ -60,9 +59,6 @@ class GroupController extends Controller
         } else {
             return returnMessage(false,"failed");
         }
-
-        // $joinGroup->user()->attach($invite_user_id);
-
 
     }
 
