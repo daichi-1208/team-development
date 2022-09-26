@@ -9,6 +9,15 @@ class Profile extends Model
 {
     use HasFactory;
 
+    protected $table = 'profiles';
+    protected $primaryKey = 'id';
+
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at'
+    ];
+
     /**
      * リレーション
      */

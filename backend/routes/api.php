@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +48,9 @@ Route::group(
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class);
         Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
-        Route::apiResource('profiles', ProfileController::class);
+        Route::get('profiles/show', [ProfileController::class, 'showProfile']);
+        Route::post('profiles/create', [ProfileController::class, 'createProfile']);
+        Route::post('profiles/update', [ProfileController::class, 'updateProfile']);
     }
 );
 

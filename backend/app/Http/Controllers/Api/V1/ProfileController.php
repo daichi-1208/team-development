@@ -3,62 +3,73 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\ProfileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
+    private $profileService;
+    // private const SUCCESS_MASSAGE = 'Profile API Response Success';
+    // private const FAILED_MASSAGE = 'Profile API Response Failed';
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param ProfileService $profileService
      */
-    public function index()
+    public function __construct(ProfileService $profileService)
     {
-        //
+        $this->profileService = $profileService;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * プロフィール詳細取得
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function showProfile(Request $request): JsonResponse
     {
-        //
+        $userId = $request->input('user_id');
+        $data = $this->profileService->showProfile($userId);
+
+        if (!empty($data)) {
+            return returnMessage(true, 'Profile successfully showed', $data, 200);
+        } else {
+            return returnMessage(false, 'Profile Failed showed', [], 500);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * ブックマーク作成処理
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return JsonResponse
      */
-    public function show($id)
+    public function createProfile(Request $request): JsonResponse
     {
-        //
+        $messages = $this->profileService->createProfile($request);
+
+        if ($messages == 'Profile successfully created') {
+            return returnMessage(true, $messages);
+        } elseif ($messages == 'Profile Failed created') {
+            return returnMessage(false, $messages, [], 500);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * プロフィール更新処理
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function update(Request $request, $id)
+    public function updateProfile(Request $request)
     {
-        //
-    }
+        $messages = $this->profileService->updateProfile($request);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($messages == 'Profile successfully updated') {
+            return returnMessage(true, 'Profile successfully updated');
+        } elseif ($messages == 'Profile Failed updated') {
+            return returnMessage(false, 'Profile Failed updated', [], 500);
+        }
     }
 }
