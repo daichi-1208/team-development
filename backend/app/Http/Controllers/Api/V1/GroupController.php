@@ -3,62 +3,111 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Group;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\GroupService;
+use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
+    private GroupService $group;
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param GroupService $group_manage
      */
-    public function index()
+    public function __construct(GroupService $group)
     {
-        //
+        $this->group = $group;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 招待メール機能
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function inviteUser(Request $request): JsonResponse
     {
-        //
+
+        if ($this->group->inviteUser($request)) {
+            return returnMessage(true, 'Group successfully joined');
+        } else {
+            return returnMessage(false, 'Group failed already joined', [], 409);
+        }
+
     }
 
     /**
-     * Display the specified resource.
+     * 招待メール経由でメンバーを追加する
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return JsonResponse
+     */
+    public function joinGroup($uuid): JsonResponse
+    {
+        $joinGroup = Group::where("uuid",$uuid)->first();
+        $user_ids = $this->group->fetchGroupUserIds($joinGroup->id);
+        $invite_user = User::findOrFail(Auth::id());
+
+        if (!$user_ids->contains($invite_user->id)) {
+            $joinGroup->user()->attach($invite_user->id);
+            return returnMessage(true,"success");
+        } else {
+            return returnMessage(false,"failed");
+        }
+
+    }
+
+    /**
+     * グループの詳細を取得
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
+        $group = $this->group->getGroup($id);
+
+            return returnMessage(true,'success',$group->toArray());
+
     }
 
     /**
-     * Update the specified resource in storage.
+     * グループの更新情報を取得し、更新処理を行う
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        //
+        $group = $this->group->updateGroup($request, $id);
+
+        if($group){
+            return returnMessage(true,"successly update group",[]);
+        }else{
+            return returnMessage(false, "failed update group", [],500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * グループに所属するユーザーを取得し、該当のユーザーを削除する
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        //
+        $record = $this->group->getGroup($id);
+        $user_ids = $this->group->fetchGroupUserIds($record->id);
+
+        if ($user_ids->contains(Auth::id())) {
+            $record->user()->detach(Auth::id());
+            return returnMessage(true, 'success leave the group', $record->toArray());
+        } else {
+            return returnMessage(false, 'already leave the group', [], 409);
+        }
     }
 }

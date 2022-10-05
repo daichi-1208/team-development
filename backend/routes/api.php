@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\V1\GenreController;
-use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\GroupController;
+use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,7 @@ Route::group(
 
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
+
         // Genre API
         Route::get('genres', [GenreController::class, 'fetchGenreLists']);
         Route::apiResource('groups', GroupController::class);
@@ -64,6 +66,16 @@ Route::group(
         Route::post('comments/update', [CommentController::class, 'updateComment']);
         Route::post('comments/delete', [CommentController::class, 'deleteComment']);
         Route::get('comments/fetch_bookmark_comment', [CommentController::class, 'fetchBookmarkComments']);
+
+        Route::apiResource('genres', GenreController::class);
+        Route::apiResource('groups', GroupController::class)->only(['show', 'update', 'destroy']);
+        Route::post('groups/inviteUser/{id}',[GroupController::class,'inviteUser']);
+        Route::post('groups/joinGroup/{id}',[GroupController::class,'joinGroup']);
+        Route::apiResource('group_manage', GroupManageController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::apiResource('profiles', ProfileController::class);
+        Route::get('profiles/show', [ProfileController::class, 'showProfile']);
+        Route::post('profiles/create', [ProfileController::class, 'createProfile']);
+        Route::post('profiles/update', [ProfileController::class, 'updateProfile']);
     }
 );
 
