@@ -24,3 +24,4 @@ if (! function_exists('returnMessage')) {
         exit();
     }
 }
+

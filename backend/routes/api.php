@@ -1,8 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\V1\GroupController;
+use App\Http\Controllers\Api\V1\GenreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\BookmarkController;
+use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -43,9 +46,27 @@ Route::group(
         'middleware' => 'auth:sanctum'
     ],
     function () {
-        Route::apiResource('bookmarks', BookmarkController::class);
+        // Bookmark API
+        Route::post('bookmarks/create', [BookmarkController::class, 'createBookmark']);
+        Route::post('bookmarks/update', [BookmarkController::class, 'updateBookmark']);
+        Route::post('bookmarks/delete', [BookmarkController::class, 'deleteBookmark']);
+        Route::get('bookmarks/fetch_group_bookmarks', [BookmarkController::class, 'fetchGroupBookmarks']);
+        Route::get('bookmarks/fetch_group_user_bookmarks', [BookmarkController::class, 'fetchGroupUserBookmarks']);
+        Route::get('bookmarks/show', [BookmarkController::class, 'showBookmark']);
+
         Route::apiResource('contacts', ContactController::class);
         Route::apiResource('favorites', FavoriteController::class);
+
+        // Genre API
+        Route::get('genres', [GenreController::class, 'fetchGenreLists']);
+        Route::apiResource('groups', GroupController::class);
+        Route::apiResource('profiles', ProfileController::class);
+        // Comment API
+        Route::post('comments/create', [CommentController::class, 'createComment']);
+        Route::post('comments/update', [CommentController::class, 'updateComment']);
+        Route::post('comments/delete', [CommentController::class, 'deleteComment']);
+        Route::get('comments/fetch_bookmark_comment', [CommentController::class, 'fetchBookmarkComments']);
+
         Route::apiResource('genres', GenreController::class);
         Route::apiResource('groups', GroupController::class)->only(['show', 'update', 'destroy']);
         Route::post('groups/inviteUser/{id}',[GroupController::class,'inviteUser']);

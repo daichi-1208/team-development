@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Genre extends Model
+class Comment extends Model
 {
     use HasFactory;
 
-    protected $table = 'genres';
+    protected $table = 'comments';
     protected $primaryKey = 'id';
 
     protected $guarded = [
@@ -21,7 +21,12 @@ class Genre extends Model
     /**
      * リレーション
      */
-    public function bookmarks(){
-        return $this->hasMany(Bookmark::class);
+    public function bookmark(){
+        return $this->belongsTo(Bookmark::class);
     }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
 }
